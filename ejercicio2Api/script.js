@@ -3,10 +3,14 @@ const limitePagina = 9;
 
 async function obtenerProductos(pagina) {
     const productosContainer = document.getElementById("productos");
+    const botonAtras = document.getElementById("boton-atras");
+    const botonSiguiente = document.getElementById("boton-adelante");
+    const indicadorPagina = document.getElementById("pagina-actual");
     const skip = (pagina - 1) * limitePagina;
     try {
         const response = await fetch(`https://dummyjson.com/products?limit=${limitePagina}&skip=${skip}&select=title,price,thumbnail,description`);
         const data = await response.json();
+        console.log(data);
 
         productosContainer.innerHTML = "";
 
@@ -24,6 +28,23 @@ async function obtenerProductos(pagina) {
                     </div>
                 </div>`;
         }
+
+        indicadorPagina.textContent = pagina;
+
+        if (pagina <= 1) {
+            botonAtras.style.display = "none";
+        } else {
+            botonAtras.style.display = "block";
+        }
+
+        const hayMas = skip + data.products.length < data.total;
+
+        if (hayMas) {
+            botonSiguiente.style.display = "block";
+        } else {
+            botonSiguiente.style.display = "none";
+        }
+
     } catch (error) {
         console.error("Error al obtener productos:", error);
     }
